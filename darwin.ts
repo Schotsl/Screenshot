@@ -23,7 +23,7 @@ export async function takeScreenshot(): Promise<Uint8Array> {
   return uint8Array;
 }
 
-export async function getDisplays(): Promise<Display[]> {
+export async function listDisplays(): Promise<Display[]> {
   const process = Deno.run({
     cmd: ["system_profiler", "SPDisplaysDataType"],
     stdout: "piped",
