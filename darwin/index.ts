@@ -1,6 +1,9 @@
-import { fromFileUrl, dirname } from "https://deno.land/std@0.114.0/path/mod.ts";
 import { ensureDir } from "https://deno.land/std@0.114.0/fs/ensure_dir.ts";
 import { Display } from "../types.ts";
+import {
+  dirname,
+  fromFileUrl,
+} from "https://deno.land/std@0.114.0/path/mod.ts";
 
 export async function takeScreenshot(
   filename?: string,
@@ -15,7 +18,9 @@ export async function takeScreenshot(
 
   const _index = (index + 1).toString();
   const _format = typeof format !== "undefined" ? format : "png";
-  const _filename = typeof filename !== "undefined" ? filename : `${path}/${uuid}.png`;
+  const _filename = typeof filename !== "undefined"
+    ? filename
+    : `${path}/${uuid}.png`;
 
   if (typeof filename === "undefined") await ensureDir(path);
 
