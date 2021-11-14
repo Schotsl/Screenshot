@@ -1,26 +1,36 @@
 import { ensureDir } from "https://deno.land/std@0.114.0/fs/ensure_dir.ts";
-import { Display } from "./types.ts";
+import { Display } from "../types.ts";
 
-export async function takeScreenshot(): Promise<Uint8Array> {
-  const uuid = crypto.randomUUID();
+export async function takeScreenshot(
+  filename?: string,
+  format?: string,
+  index = 0,
+): Promise<Uint8Array | string> {
   const path = `./.screenshots`;
-  const file = `./${path}/${uuid}.png`;
+  const uuid = crypto.randomUUID();
 
-  await ensureDir(".screenshots");
+  index = index + 1;
+  format = typeof format !== "undefined" ? format : "png";
+  filename = typeof filename !== "undefined" ? filename : `${path}/${uuid}.png`;
+
+  if (typeof filename === "undefined") await ensureDir(".screenshots");
 
   const process = Deno.run({
-    cmd: ["screencapture", file],
+    cmd: ["screencapture", "-t", format, "-D", index.toString(), filename],
     stdout: "piped",
     stderr: "piped",
   });
 
   await process.output();
-  const uint8Array = await Deno.readFile(file);
 
-  await Deno.remove(file);
-  await Deno.remove(path);
-
-  return uint8Array;
+  if (typeof filename === "undefined") {
+    const uint8Array = await Deno.readFile(filename);
+    await Deno.remove(filename);
+    await Deno.remove(path);
+    return uint8Array;
+  } else {
+    return filename;
+  }
 }
 
 export async function listDisplays(): Promise<Display[]> {
